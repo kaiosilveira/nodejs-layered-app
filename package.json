@@ -1,0 +1,24 @@
+{
+  "name": "nodejs-layered-app",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Sample NodeJS API to demonstrate a layered structure",
+  "main": "index.js",
+  "author": "Kaio Silveira",
+  "license": "MIT",
+  "scripts": {
+    "start": "node .",
+    "test:unit": "./node_modules/.bin/mocha './src/**/*.test.js'"
+  },
+  "dependencies": {
+    "express": "^4.17.3",
+    "lodash": "^4.17.21",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "chai": "^4.3.6",
+    "chai-as-promised": "^7.1.1",
+    "chai-spies": "^1.0.0",
+    "mocha": "^9.2.1"
+  }
+}
