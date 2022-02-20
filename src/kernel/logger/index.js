@@ -1,13 +1,16 @@
-export default class Logger {
-  error(obj) {
-    console.log(JSON.stringify(obj));
-  }
+export default class LoggerFactory {
+  static create({ winston }) {
+    const {
+      format: { combine, timestamp, prettyPrint },
+    } = winston;
 
-  info(obj) {
-    console.log(JSON.stringify(obj));
-  }
+    const logger = winston.createLogger({
+      level: 'info',
+      format: combine(timestamp(), prettyPrint()),
+    });
 
-  warn(obj) {
-    console.log(JSON.stringify(obj));
+    logger.add(new winston.transports.Console({ format: winston.format.simple() }));
+
+    return logger;
   }
 }
