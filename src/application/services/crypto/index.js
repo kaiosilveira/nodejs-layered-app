@@ -1,24 +1,27 @@
 export class CryptoService {
-  constructor({ crypto, SECRET_KEY }) {
+  constructor({ libs: { crypto }, env: { ENCRYPTION_KEY } }) {
     this._crypto = crypto;
-    this._SECRET_KEY = SECRET_KEY;
+    this._SECRET_KEY = ENCRYPTION_KEY;
 
     this.encrypt = this.encrypt.bind(this);
     this.decrypt = this.decrypt.bind(this);
     this.hash = this.hash.bind(this);
   }
 
-  encrypt(str) {
-    return this._crypto.AES.encrypt(str, this._SECRET_KEY).toString();
+  encrypt({ args: str }) {
+    const payload = this._crypto.AES.encrypt(str, this._SECRET_KEY).toString();
+    return { payload };
   }
 
-  decrypt(encrypted) {
+  decrypt({ args: encrypted }) {
     const decryptedBytes = this._crypto.AES.decrypt(encrypted, this._SECRET_KEY);
-    return decryptedBytes.toString(this._crypto.enc.Utf8);
+    const payload = decryptedBytes.toString(this._crypto.enc.Utf8);
+    return { payload };
   }
 
-  hash(str) {
-    return this._crypto.HmacSHA256(str, this._SECRET_KEY).toString();
+  hash({ args: str }) {
+    const payload = this._crypto.HmacSHA256(str, this._SECRET_KEY).toString();
+    return { payload };
   }
 }
 
