@@ -1,27 +1,27 @@
 import chai from 'chai';
 import asPromised from 'chai-as-promised';
 import http from 'chai-http';
-import { createApp } from '../../../../src/app.js';
+import mongoose from 'mongoose';
+
+import SecurityResource from './index.js';
 import * as httpCodes from '../../../../src/presentation/enumerators/http-codes.js';
+import AcceptanceTestServerFactory from '../../../_config/server/index.js';
 
 chai.use(http);
 chai.use(asPromised);
 chai.should();
 
-class SecurityResource {
-  constructor({ app }) {
-    this._app = app;
-  }
-
-  async register({ username, password }) {
-    return await chai.request(this._app).post('/security/register').send({ username, password });
-  }
-}
-
 describe('Security resource', () => {
-  let app;
-  beforeEach(() => {
-    app = createApp();
+  let app, dbServer;
+  beforeEach(async () => {
+    const serverStack = await AcceptanceTestServerFactory.create();
+    app = serverStack.app;
+    dbServer = serverStack.dbServer;
+  });
+
+  afterEach(async () => {
+    await mongoose.disconnect();
+    await dbServer.stop();
   });
 
   describe('register', () => {
@@ -33,6 +33,8 @@ describe('Security resource', () => {
         .then(({ status, body }) => {
           status.should.be.eql(httpCodes.CREATED);
           body._id.should.be.a('string');
+          body.username.should.be.eql(username);
+          body.password.should.not.be.eql(password);
         }).should.not.be.rejected;
     });
   });
