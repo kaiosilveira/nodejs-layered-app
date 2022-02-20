@@ -24,7 +24,10 @@ export default class SecurityController {
         return res.status(httpCodes.BAD_REQUEST).json(errors.INVALID_PASSWORD());
       }
 
-      const createdUser = await securityService.register({ args: { username, password }, ctx });
+      const { payload: createdUser } = await securityService.register({
+        args: { username, password },
+        ctx,
+      });
 
       return res.status(httpCodes.CREATED).json(createdUser);
     } catch ({ message, stack }) {

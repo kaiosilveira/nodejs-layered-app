@@ -30,9 +30,12 @@ export default class SecurityService {
     try {
       const { cryptoService, usersRepository } = this.props;
       const { payload: encryptedPwd } = cryptoService.hash({ args: password });
-      const registeredUser = await usersRepository.create({ username, password: encryptedPwd });
+      const { payload: createdUser } = await usersRepository.create({
+        username,
+        password: encryptedPwd,
+      });
 
-      return { payload: registeredUser };
+      return { payload: createdUser };
     } catch ({ message, stack }) {
       this.logger.error({ message, stack, ...ctx });
       throw new ApplicationError(errors.UNEXPECTED());

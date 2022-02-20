@@ -53,7 +53,7 @@ describe('SecurityController', () => {
       const req = { body: { username, password }, context: ctx };
       const createdUser = Object.assign({ username }, { _id: uuid() });
       const securityService = chai.spy.interface({
-        register: async () => Promise.resolve(createdUser),
+        register: async () => Promise.resolve({ payload: createdUser }),
       });
 
       return new SecurityController({ applicationLayer: { services: { securityService } } })
@@ -61,7 +61,10 @@ describe('SecurityController', () => {
         .then(({ status, body }) => {
           status.should.be.eql(httpCodes.CREATED);
           body.should.be.eql(createdUser);
-          securityService.register.should.have.been.called.with({ args: { username, password }, ctx });
+          securityService.register.should.have.been.called.with({
+            args: { username, password },
+            ctx,
+          });
         }).should.not.be.rejected;
     });
 
@@ -81,7 +84,10 @@ describe('SecurityController', () => {
 
           const { message, stack } = error;
           logger.error.should.have.been.called.with({ message, stack, ...ctx });
-          securityService.register.should.have.been.called.with({ args: { username, password }, ctx });
+          securityService.register.should.have.been.called.with({
+            args: { username, password },
+            ctx,
+          });
         }).should.not.be.rejected;
     });
   });

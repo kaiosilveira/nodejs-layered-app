@@ -1,24 +1,21 @@
-import express from 'express';
-import winston from 'winston';
-import crypto from 'crypto-js';
-
-import { configureLogger } from './kernel/logger/create.js';
+import LoggerFactory from './kernel/logger/index.js';
+import MongooseFactory from './data-access/factories/mongoose/index.js';
 import createSecurityResource from './presentation/resources/security/index.js';
 
-export const createApp = () => {
-  const app = express();
-  app.use(express.json());
+export class ExpressAppFactory {
+  static async create({ libs, env }) {
+    const winston = libs.winston;
+    const express = libs.express;
+    const logger = LoggerFactory.create({ winston });
+    const dbConn = await MongooseFactory.createConnection({ libs, env, logger });
+    const config = { libs, env, logger, dbConn };
+    const app = express();
+    app.use(express.json());
 
-  const logger = configureLogger({ winston });
+    const securityResource = createSecurityResource(config);
 
-  const config = {
-    libs: { express, crypto },
-    env: { ENCRYPTION_KEY: process.env.ENCRYPTION_KEY },
-    logger,
-  };
-  const securityResource = createSecurityResource(config);
+    app.use(`/${securityResource.path}`, securityResource.router);
 
-  app.use(`/${securityResource.path}`, securityResource.router);
-
-  return app;
-};
+    return app;
+  }
+}

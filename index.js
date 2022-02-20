@@ -1,6 +1,23 @@
 import http from 'http';
-import { createApp } from './src/app.js';
+import express from 'express';
+import winston from 'winston';
+import crypto from 'crypto-js';
+import mongoose from 'mongoose';
+
+import { ExpressAppFactory } from './src/app.js';
 
 const PORT = process.env.PORT;
 
-http.createServer(createApp()).listen(PORT, () => console.log(`🚀 Server running at ${PORT}`));
+const env = {
+  ENCRYPTION_KEY: process.env.ENCRYPTION_KEY,
+  DB_HOST: process.env.DB_HOST,
+  DB_NAME: process.env.DB_NAME,
+  DB_PROTOCOL: process.env.DB_PROTOCOL,
+  DB_PORT: process.env.DB_PORT
+};
+
+const libs = { mongoose, express, winston, crypto };
+
+http
+  .createServer(ExpressAppFactory.create({ libs, env }))
+  .listen(PORT, () => console.log(`🚀 Server running at ${PORT}`));

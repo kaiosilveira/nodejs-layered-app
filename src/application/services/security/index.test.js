@@ -52,7 +52,7 @@ describe('SecurityService', () => {
       const encryptedPwd = 'encrypted-pwd';
       const cryptoService = chai.spy.interface({ hash: () => ({ payload: encryptedPwd }) });
       const usersRepository = chai.spy.interface({
-        create: async () => Promise.resolve(registeredUser),
+        create: async () => Promise.resolve({ payload: registeredUser }),
       });
 
       return new SecurityService({
