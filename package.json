@@ -11,6 +11,7 @@
     "test:unit": "./node_modules/.bin/mocha './src/**/*.test.js'"
   },
   "dependencies": {
+    "crypto-js": "^4.1.1",
     "express": "^4.17.3",
     "lodash": "^4.17.21",
     "uuid": "^8.3.2",
