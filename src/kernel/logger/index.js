@@ -1,5 +1,5 @@
 export default class LoggerFactory {
-  static create({ winston }) {
+  static createInstance({ winston }) {
     const {
       format: { combine, timestamp, prettyPrint },
     } = winston;
@@ -12,5 +12,9 @@ export default class LoggerFactory {
     logger.add(new winston.transports.Console({ format: winston.format.simple() }));
 
     return logger;
+  }
+
+  static to(obj, config) {
+    return config.logger.child({ object: obj });
   }
 }

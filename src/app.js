@@ -6,7 +6,7 @@ export class ExpressAppFactory {
   static async create({ libs, env }) {
     const winston = libs.winston;
     const express = libs.express;
-    const logger = LoggerFactory.create({ winston });
+    const logger = LoggerFactory.createInstance({ winston });
     const dbConn = await MongooseFactory.createConnection({ libs, env, logger });
     const config = { libs, env, logger, dbConn };
     const app = express();
