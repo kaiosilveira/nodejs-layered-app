@@ -3,6 +3,7 @@
 The presentation layer is the upmost layer in the application. It is responsible for implementing the express routes, handlers (in the form of controller classes) and all the middleware needed to provide a safe and effective communication with the callers. This layer has the following structure:
 
 - [resources](#resources)
+- [middleware](#middleware)
 
 ## Resources
 
@@ -39,3 +40,9 @@ export default config => {
   };
 };
 ```
+
+## Middleware
+
+**IncomingRequestMiddleware**: Middleware responsible for registering all incoming requests, attaching a `startTime` field to it and configuring its context, including a unique universal identifier (uuid) for each, to allow logging searches to be made easier.
+
+**OutgoingResponseMiddleware**: Midldeware responsible for registering all outgoing responses, its duration in milliseconds and its underlying status code.

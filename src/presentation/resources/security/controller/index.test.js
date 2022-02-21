@@ -7,6 +7,7 @@ import noop from 'lodash/noop.js';
 import SecurityController from './index.js';
 import * as errors from './errors.js';
 import * as httpCodes from '../../../enumerators/http-codes.js';
+import ResponseStub from '../../../../../test/utils/libs/express/index.js';
 
 chai.use(spies);
 chai.use(asPromised);
@@ -21,15 +22,7 @@ describe('SecurityController', () => {
     error = new Error('Unexpected error');
     logger = chai.spy.interface({ error: noop });
     ctx = { actionUUID: uuid() };
-    res = chai.spy.interface({
-      status(code) {
-        this._statusCode = code;
-        return this;
-      },
-      json(body) {
-        return { status: this._statusCode || httpCodes.OK, body };
-      },
-    });
+    res = new ResponseStub();
   });
 
   describe('register', () => {
