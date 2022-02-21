@@ -20,7 +20,7 @@ flowchart TD
 ```
 
 Each layer depends on one or more layers below it, but never on a layer above it.
-As you can guess, dependency management between layers is a crucial point to keep the implementation clean, that is why a dependency injection strategy was implemented, allowing parts of each layer to explicitly tell what dependencies it has. These dependencies are resolved in the bootstrap phase of the application.
+As you can guess, dependency management between layers is a crucial point to keep the implementation clean, that is why a [dependency injection](#dependency-injection) strategy was implemented, allowing parts of each layer to explicitly tell what dependencies it has. These dependencies are resolved in the bootstrap phase of the application.
 
 You can find detailed documentation for each of these layers here:
 
@@ -39,3 +39,38 @@ There are three types of tests in this application, each of them described and d
 
 - Unit tests: cover the functionality of a class or function in isolation, mocking and stubbing its dependencies when needed
 - Acceptance tests: make sure the entire application is working, from the entry points (express route definitions) all the way down to the database communication (stubbed using an in-memory database to make tests faster and more independent of database state)
+
+## Global application config
+
+As the application relies heavily on passing dependencies to classes and functions to isolate as much as possible the utilisation of external resources, thus keeping the unit tests simple and enabling a high level of test coverage, a global shared config needs to be passed in to the main `ExpressAppFactory` at bootstrap time. This config should contain environment information and the external libraries needed by the downstream components, in the various layers. This configuration is passed forward in a "self-service" way, where each layer extracts what it needs to make their classes and functions work.
+
+## Dependency injection
+
+In order to keep the instantiation of resources as clean as possible and to avoid repetitive work instantiating numerous dependencies for each layer, a dependency injection system was put in place. This system works by defining an `$inject` field on the class that wants to have dependencies injected automatically and defining a `$tag` field on each class that is eligible for injection. To give an example, imagine that we have a controller at the presentation layer called `MyController`. This controller needs a service called `MyService` to work. We can make this dependency explicit by passing `MyService`'s tag to the correct place in the `MyController` dependency structure, like this:
+
+```javascript
+// application layer
+class MyService {}
+MyService.$tag = 'myService';
+
+// presentation layer
+class MyController {}
+
+MyController.$inject = { applicationLayer: { services: { myService: MyService.$tag } } };
+```
+
+Then, to instantiate `MyController`, we could simply call an utility function called `instantiated`, that will resolve all dependencies and return a working instance of `MyController`:
+
+```javascript
+export default config => {
+  return {
+    path: 'myResource',
+    router: createRouter({
+      expressRouterInstance: config.libs.express.Router(),
+      controller: instantiated(MyController, config),
+    }),
+  };
+};
+```
+
+The `instantiated` function rely on a static factory that knows how to build a `MyController` and also knows how to delegate the instantiation of resources from other layers to their corresponding static factories. By design, each layer will contain a factory that knows how to build the whole layer. In cases where there are multiple groups of classes in a layer, the static layer factory can delegate to subfactories within the same layer, e.g., in the application layer there is `ApplicationLayerFactory`, which delegates the instantiation of the application services to `ApplicationServiceFactory`.
