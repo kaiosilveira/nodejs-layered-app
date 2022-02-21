@@ -1,6 +1,8 @@
+import SecurityService from '../../../../application/services/security/index.js';
 import * as httpCodes from '../../../enumerators/http-codes.js';
 import * as errors from './errors.js';
 
+const tag = 'securityController';
 export default class SecurityController {
   constructor(props = { libs: {}, applicationLayer: { services: {} }, env: {} }) {
     this.logger = props.logger;
@@ -59,3 +61,8 @@ export default class SecurityController {
     }
   }
 }
+
+SecurityController.$tag = tag;
+SecurityController.$inject = {
+  applicationLayer: { services: { securityService: SecurityService.$tag } },
+};
