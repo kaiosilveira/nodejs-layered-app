@@ -1,3 +1,4 @@
+const TAG = 'cryptoService';
 export class CryptoService {
   constructor({ libs: { crypto }, env: { ENCRYPTION_KEY } }) {
     this._crypto = crypto;
@@ -24,5 +25,7 @@ export class CryptoService {
     return { payload };
   }
 }
+
+CryptoService.$tag = TAG;
 
 export default CryptoService;

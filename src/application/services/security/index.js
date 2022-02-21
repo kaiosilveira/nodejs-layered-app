@@ -1,13 +1,9 @@
-import * as errorSeverities from '../../enumerators/error-severities.js';
+import UsersRepository from '../../../data-access/repositories/user/index.js';
+import { ApplicationError } from '../../errors/index.js';
+import CryptoService from '../crypto/index.js';
 import * as errors from './errors.js';
 
-class ApplicationError extends Error {
-  constructor({ msg, code, severity = errorSeverities.UNEXPECTED }) {
-    super(msg);
-    this.code = code;
-    this.severity = severity;
-  }
-}
+const TAG = 'securityService';
 
 export default class SecurityService {
   constructor(props = { applicationLayer: {}, dataAccessLayer: {} }) {
@@ -44,3 +40,9 @@ export default class SecurityService {
 
   async login() {}
 }
+
+SecurityService.$tag = TAG;
+SecurityService.$inject = {
+  applicationLayer: { services: { cryptoService: CryptoService.$tag } },
+  dataAccessLayer: { repositories: { usersRepository: UsersRepository.$tag } },
+};

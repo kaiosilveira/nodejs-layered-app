@@ -1,4 +1,6 @@
-export default class UsersRepository {
+const TAG = 'usersRepository';
+
+class UsersRepository {
   constructor({ model, logger } = {}) {
     this._model = model;
     this._logger = logger;
@@ -14,3 +16,7 @@ export default class UsersRepository {
     }
   }
 }
+
+UsersRepository.$tag = TAG;
+
+export default UsersRepository;
