@@ -12,22 +12,42 @@ chai.use(asPromised);
 chai.should();
 
 describe('Security resource', () => {
-  let app, dbServer;
-  beforeEach(async () => {
-    const serverStack = await AcceptanceTestServerFactory.create();
-    app = serverStack.app;
-    dbServer = serverStack.dbServer;
-  });
-
-  afterEach(async () => {
-    await mongoose.disconnect();
-    await dbServer.stop();
-  });
+  const username = 'kaio';
+  const password = 'kaio123';
 
   describe('register', () => {
+    let app, dbServer;
+    before(async () => {
+      const serverStack = await AcceptanceTestServerFactory.create();
+      app = serverStack.app;
+      dbServer = serverStack.dbServer;
+    });
+
+    after(async () => {
+      await mongoose.disconnect();
+      await dbServer.stop();
+      app = null;
+    });
+
+    it('should return bad request if username is not defined', () => {
+      return new SecurityResource({ app })
+        .register({ username: undefined, password })
+        .then(({ status, body }) => {
+          status.should.be.eql(httpCodes.BAD_REQUEST);
+          body.msg.should.be.eql('Invalid username, expected a string');
+        }).should.not.be.rejected;
+    });
+
+    it('should return bad request if password is not defined', () => {
+      return new SecurityResource({ app })
+        .register({ username, password: undefined })
+        .then(({ status, body }) => {
+          status.should.be.eql(httpCodes.BAD_REQUEST);
+          body.msg.should.be.eql('Invalid password, expected a string');
+        }).should.not.be.rejected;
+    });
+
     it('should allow an user to register using username and password', () => {
-      const username = 'kaio';
-      const password = 'kaio123';
       return new SecurityResource({ app })
         .register({ username, password })
         .then(({ status, body }) => {
