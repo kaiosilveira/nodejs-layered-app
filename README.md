@@ -1,4 +1,5 @@
 [![CI](https://github.com/kaiosilveira/nodejs-layered-app/actions/workflows/ci.yml/badge.svg)](https://github.com/kaiosilveira/nodejs-layered-app/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/kaiosilveira/nodejs-layered-app/branch/main/graph/badge.svg?token=DZ5UX1Y0P5)](https://codecov.io/gh/kaiosilveira/nodejs-layered-app)
 
 # NodeJS Layered App
 
