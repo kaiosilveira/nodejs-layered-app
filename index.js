@@ -8,7 +8,7 @@ import { v4 as uuid } from 'uuid';
 import { ExpressAppFactory } from './src/app.js';
 
 const PORT = process.env.PORT;
-
+const libs = { mongoose, express, winston, crypto, uuid };
 const env = {
   ENCRYPTION_KEY: process.env.ENCRYPTION_KEY,
   DB_HOST: process.env.DB_HOST,
@@ -17,8 +17,16 @@ const env = {
   DB_PORT: process.env.DB_PORT,
 };
 
-const libs = { mongoose, express, winston, crypto, uuid };
+bootstrap();
+async function bootstrap() {
+  const expressApp = await ExpressAppFactory.create({ libs, env });
 
-http
-  .createServer(ExpressAppFactory.create({ libs, env }))
-  .listen(PORT, () => console.log(`🚀 Server running at ${PORT}`));
+  http
+    .createServer(expressApp.instance)
+    .listen(PORT, () => console.log(`🚀 Server running at ${PORT}`));
+
+  process.on('SIGINT', async () => {
+    await expressApp.destroy();
+    process.exit(0);
+  });
+}
