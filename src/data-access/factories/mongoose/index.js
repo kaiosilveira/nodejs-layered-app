@@ -5,12 +5,13 @@ export default class MongooseFactory {
     logger,
   }) {
     const url = `${DB_PROTOCOL}://${DB_HOST}:${DB_PORT}/${DB_NAME}`;
-    const connection = await mongoose.connect(url, {
+    const connection = mongoose.createConnection(url, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       connectTimeoutMS: 3000,
       socketTimeoutMS: 8000,
     });
+
     const userSchema = new mongoose.Schema({
       username: String,
       password: String,
@@ -19,14 +20,7 @@ export default class MongooseFactory {
 
     connection.model('user', userSchema);
 
-    logger.info({ message: 'Connection created' });
-
-    process.on('SIGINT', () => {
-      logger.info('Closing database connection');
-      mongoose.disconnect();
-      logger.info('Database connection closed');
-      process.exit(0);
-    });
+    logger.info({ message: 'Database connection created' });
 
     return connection;
   }
