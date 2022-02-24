@@ -52,7 +52,10 @@ export default class SecurityController {
       }
 
       const { securityService } = this.props;
-      const token = await securityService.authenticate({ args: { username, password }, ctx });
+      const { payload: token } = await securityService.authenticate({
+        args: { username, password },
+        ctx,
+      });
 
       return res.json({ token });
     } catch ({ message, stack }) {

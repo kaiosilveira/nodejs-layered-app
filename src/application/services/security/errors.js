@@ -12,8 +12,20 @@ export const INVALID_PASSWORD = () => ({
   severity: errorSeverities.CORRECTABLE,
 });
 
+export const INVALID_CREDENTIALS = () => ({
+  msg: 'Invalid credentials',
+  code: 'app:svc:sec:invalid-credentials',
+  severity: errorSeverities.CORRECTABLE,
+});
+
 export const UNEXPECTED = () => ({
   msg: 'Unexpected error',
   code: 'app:svc:sec:unexpected',
+  severity: errorSeverities.UNEXPECTED,
+});
+
+export const USER_NOT_FOUND = () => ({
+  msg: 'User not found',
+  code: 'app:svc:sec:user-not-found',
   severity: errorSeverities.UNEXPECTED,
 });

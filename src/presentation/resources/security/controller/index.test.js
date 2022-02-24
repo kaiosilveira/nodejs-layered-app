@@ -106,7 +106,7 @@ describe('SecurityController', () => {
       const req = { body: { username, password }, context: ctx };
       const token = 'jwt-token';
       const securityService = chai.spy.interface({
-        authenticate: async () => Promise.resolve(token),
+        authenticate: async () => Promise.resolve({ payload: token }),
       });
       return new SecurityController({ applicationLayer: { services: { securityService } } })
         .login(req, res)
