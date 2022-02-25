@@ -1,6 +1,7 @@
 import UsersRepository from '../../../data-access/repositories/user/index.js';
 import { ApplicationError } from '../../errors/index.js';
 import CryptoService from '../crypto/index.js';
+import JWTService from '../jwt/index.js';
 import * as errors from './errors.js';
 
 const TAG = 'securityService';
@@ -9,6 +10,7 @@ export default class SecurityService {
   constructor(props = { applicationLayer: {}, dataAccessLayer: {} }) {
     this.logger = props.logger;
     this.props = { ...props.applicationLayer?.services, ...props.dataAccessLayer?.repositories };
+
     this.register = this.register.bind(this);
     this.authenticate = this.authenticate.bind(this);
 
@@ -74,7 +76,12 @@ export default class SecurityService {
 
   _signJWTTokenFor({ args: user, ctx }) {
     try {
-      return this.props.jwtService.sign({ _id: user._id, username: user.username });
+      const result = this.props.jwtService.sign({
+        args: { _id: user._id, username: user.username },
+        ctx,
+      });
+
+      return result.payload;
     } catch ({ message, stack }) {
       this.logger.error({ message, stack, ...ctx });
       throw new ApplicationError(errors.UNEXPECTED());
@@ -91,6 +98,8 @@ export default class SecurityService {
 
 SecurityService.$tag = TAG;
 SecurityService.$inject = {
-  applicationLayer: { services: { cryptoService: CryptoService.$tag } },
+  applicationLayer: {
+    services: { cryptoService: CryptoService.$tag, jwtService: JWTService.$tag },
+  },
   dataAccessLayer: { repositories: { usersRepository: UsersRepository.$tag } },
 };

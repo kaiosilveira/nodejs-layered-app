@@ -193,7 +193,7 @@ describe('SecurityService', () => {
     });
 
     it('should authenticate an user', () => {
-      const jwtService = chai.spy.interface({ sign: () => token });
+      const jwtService = chai.spy.interface({ sign: () => ({ payload: token }) });
       const cryptoService = chai.spy.interface({ hash: () => ({ payload: encryptedPwd }) });
       const usersRepository = chai.spy.interface({
         getBy: async () => Promise.resolve({ payload: user }),
@@ -205,7 +205,7 @@ describe('SecurityService', () => {
       })
         .authenticate({ args: { username, password }, ctx })
         .then(({ payload }) => {
-          jwtService.sign.should.have.been.called.with({ _id: user._id, username });
+          jwtService.sign.should.have.been.called.with({ args: { _id: user._id, username }, ctx });
           payload.should.be.eql(token);
         }).should.not.be.rejected;
     });
@@ -231,7 +231,7 @@ describe('SecurityService', () => {
         .authenticate({ args: { username, password }, ctx })
         .then(unexpectedPromiseResolutionGuard)
         .catch(({ message, code, severity }) => {
-          jwtService.sign.should.have.been.called.with({ _id: user._id, username });
+          jwtService.sign.should.have.been.called.with({ args: { _id: user._id, username }, ctx });
           const err = errors.UNEXPECTED();
           message.should.be.eql(err.msg);
           code.should.be.eql(err.code);
