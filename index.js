@@ -26,8 +26,11 @@ async function bootstrap() {
     .createServer(expressApp.instance)
     .listen(PORT, () => console.log(`🚀 Server running at ${PORT}`));
 
-  process.on('SIGINT', async () => {
+  const die = async () => {
     await expressApp.destroy();
     process.exit(0);
-  });
+  };
+
+  process.on('SIGINT', die);
+  process.on('SIGTERM', die);
 }
