@@ -34,6 +34,45 @@ You can find detailed documentation for each of these layers here:
 
 The idea behind a layered application is to have multiple logical building blocks, each of them with a set of responsibilities that allows the other ones to function properly. For instance, the goal of the presentation layer is to be the first point of contact for the callers of the API, rejecting unauthorized or malformed requests quickly and effectively, whilst the goal of the application layer is to hold critical application logic to keep the whole application consistent.
 
+## Directory structure
+
+```bash
+├── app.js
+├── app.test.js
+├── application
+│   ├── README.md
+│   ├── enumerators
+│   ├── errors
+│   ├── factory
+│   └── services
+│       ├── factory
+│       ├── crypto
+│       ├── jwt
+│       └── ...
+├── data-access
+│   ├── README.md
+│   ├── factories
+│   │   └── mongoose
+│   └── repositories
+│       ├── factory
+│       ├── user
+│       └── ...
+├── domain
+│   └── README.md
+├── kernel
+│   └── logger
+└── presentation
+    ├── README.md
+    ├── factory
+    ├── enumerators
+    ├── middleware
+    │   ├── incoming-request
+    │   └── outgoing-response
+    └── resources
+        ├── security
+        └── ...
+```
+
 ## Testing strategy
 
 There are three types of tests in this application, each of them described and detailed below:
