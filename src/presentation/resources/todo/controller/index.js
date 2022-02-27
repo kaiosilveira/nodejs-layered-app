@@ -1,3 +1,4 @@
+import TodoService from '../../../../application/services/todo/index.js';
 import * as httpCodes from '../../../enumerators/http-codes.js';
 import * as errors from './errors.js';
 
@@ -28,4 +29,4 @@ export default class TodoController {
 }
 
 TodoController.$tag = tag;
-TodoController.$inject = { applicationLayer: { services: { todoService: 'todoService' } } };
+TodoController.$inject = { applicationLayer: { services: { todoService: TodoService.$tag } } };

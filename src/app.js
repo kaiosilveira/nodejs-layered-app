@@ -1,6 +1,7 @@
 import LoggerFactory from './kernel/logger/index.js';
 import MongooseFactory from './data-access/factories/mongoose/index.js';
 import createSecurityResource from './presentation/resources/security/index.js';
+import createTodoResource from './presentation/resources/todo/index.js';
 import configureMiddleware from './presentation/middleware/index.js';
 
 export class ExpressApp {
@@ -37,8 +38,10 @@ export class ExpressAppFactory {
     app.use(middleware.outgoingResponseMiddleware.hook);
 
     const securityResource = createSecurityResource(config);
+    const todoResource = createTodoResource(config);
 
     app.use(`/${securityResource.path}`, securityResource.router);
+    app.use(`/${todoResource.path}`, todoResource.router);
 
     return new ExpressApp({ appInstance: app, dbConn, logger });
   }

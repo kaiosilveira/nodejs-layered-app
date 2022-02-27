@@ -1,7 +1,9 @@
+import TodoRepository from '../../../data-access/repositories/todo/index.js';
 import TodoBuilder from '../../../domain/entities/todo/builder/index.js';
 import * as errorSeverities from '../../enumerators/error-severities.js';
 import { ApplicationError } from '../../errors/index.js';
 
+const TAG = 'todoService';
 export default class TodoService {
   constructor({ dataAccessLayer, logger } = {}) {
     this.props = { ...dataAccessLayer?.repositories };
@@ -34,3 +36,8 @@ export default class TodoService {
     }
   }
 }
+
+TodoService.$tag = TAG;
+TodoService.$inject = {
+  dataAccessLayer: { repositories: { todoRepository: TodoRepository.$tag } },
+};

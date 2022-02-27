@@ -1,6 +1,8 @@
+import mongoose from 'mongoose';
+const ObjectId = mongoose.Types.ObjectId;
 export default class MongooseFactory {
   static async createConnection({
-    libs: { mongoose },
+    libs: { mongoose: m },
     env: { DB_PROTOCOL, DB_HOST, DB_PORT, DB_NAME },
     logger,
   }) {
@@ -12,13 +14,20 @@ export default class MongooseFactory {
       socketTimeoutMS: 8000,
     });
 
-    const userSchema = new mongoose.Schema({
+    const userSchema = new m.Schema({
       username: String,
       password: String,
       registeredAt: { type: Date, default: Date.now },
     });
 
+    const todoSchema = new m.Schema({
+      title: String,
+      ownerId: { type: ObjectId, ref: 'user' },
+      due: { type: Date },
+    });
+
     connection.model('user', userSchema);
+    connection.model('todo', todoSchema);
 
     logger.info({ message: 'Database connection created' });
 
