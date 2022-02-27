@@ -48,10 +48,24 @@ The idea behind a layered application is to have multiple logical building block
 
 ## Testing strategy
 
-There are three types of tests in this application, each of them described and detailed below:
+There are two types of tests in this application, each of them described and detailed below:
 
 - Unit tests: cover the functionality of a class or function in isolation, mocking and stubbing its dependencies when needed
 - Acceptance tests: make sure the entire application is working, from the entry points (express route definitions) all the way down to the database communication (stubbed using an in-memory database to make tests faster and more independent of database state)
+
+## Environment
+
+Currently, the following environment variables are needed:
+
+```
+PORT=<app_port>
+ENCRYPTION_KEY='<ENCRYPTION_KEY>'
+JWT_SIGNING_KEY='<JWT_SIGNING_KEY>'
+DB_HOST='<localhost>'
+DB_NAME='<db_name>'
+DB_PROTOCOL='<db_protocol>'
+DB_PORT=<db_port>
+```
 
 ## Global application config
 
