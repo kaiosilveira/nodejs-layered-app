@@ -1,4 +1,4 @@
-import RepositoryFactory from '../../../data-access/repositories/factory/index.js';
+import RepositoryFactory from '../../../data-access/repositories/_factory/index.js';
 import UsersRepository from '../../../data-access/repositories/user/index.js';
 import LoggerFactory from '../../../kernel/logger/index.js';
 import CryptoService from '../crypto/index.js';
