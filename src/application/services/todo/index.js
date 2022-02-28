@@ -25,7 +25,11 @@ export default class TodoService {
     if (due) builder.due(due);
 
     try {
-      const createdTodo = await this.props.todoRepository.create({ ctx, args: builder.build() });
+      const { payload: createdTodo } = await this.props.todoRepository.create({
+        ctx,
+        args: builder.build(),
+      });
+
       return { payload: createdTodo };
     } catch ({ message, stack }) {
       this._logger.error({ message, stack, ...ctx });

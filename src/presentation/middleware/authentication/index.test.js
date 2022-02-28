@@ -22,7 +22,7 @@ describe.only('AuthenticationMiddleware', () => {
   });
 
   it('should return 401 (UNAUTHORIZED) if request has no authentication token', () => {
-    const req = { headers: { Authorization: undefined } };
+    const req = { headers: { authorization: undefined } };
     const next = chai.spy();
     const result = new AuthenticationMiddleware().hook(req, res, next);
     result.status.should.be.eql(httpCodes.UNAUTHORIZED);
@@ -30,7 +30,7 @@ describe.only('AuthenticationMiddleware', () => {
   });
 
   it('should return 401 (UNAUTHORIZED) if it fails to decrypt', () => {
-    const req = { headers: { Authorization: token } };
+    const req = { headers: { authorization: `Bearer ${token}` } };
     const next = chai.spy();
     const error = new Error('error');
     const jwt = chai.spy.interface({
@@ -50,7 +50,7 @@ describe.only('AuthenticationMiddleware', () => {
   });
 
   it('should move next in the stack if it succeeds', () => {
-    const req = { headers: { Authorization: token }, context };
+    const req = { headers: { authorization: `Bearer ${token}` }, context };
     const next = chai.spy();
     const jwt = chai.spy.interface({ verify: () => user });
 

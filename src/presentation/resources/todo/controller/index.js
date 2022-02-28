@@ -7,6 +7,8 @@ export default class TodoController {
   constructor({ applicationLayer, logger } = {}) {
     this.props = { ...applicationLayer?.services };
     this._logger = logger;
+
+    this.add = this.add.bind(this);
   }
 
   async add(req, res) {
@@ -19,8 +21,8 @@ export default class TodoController {
 
     try {
       const todo = { title, due };
-      const createdTodo = await this.props.todoService.add({ args: todo, ctx });
-      return res.status(httpCodes.CREATED).json(createdTodo);
+      const { payload: createdTodo } = await this.props.todoService.add({ args: todo, ctx });
+      res.status(httpCodes.CREATED).json(createdTodo);
     } catch ({ message, stack }) {
       this._logger.error({ message, stack, ...ctx });
       return res.status(httpCodes.INTERNAL_SERVER_ERROR).json(errors.UNEXPECTED());

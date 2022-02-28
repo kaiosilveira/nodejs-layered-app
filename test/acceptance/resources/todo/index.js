@@ -7,7 +7,7 @@ export default class TodoResource {
 
   async create({ todo, token }) {
     const req = chai.request(this._app).post('/todos');
-    req.set('Authorization', `Bearer ${token}`);
+    req.set('authorization', `Bearer ${token}`);
     return await req.send(todo);
   }
 }

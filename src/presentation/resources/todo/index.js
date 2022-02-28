@@ -8,6 +8,7 @@ export default config => {
     router: createRouter({
       expressRouterInstance: config.libs.express.Router(),
       controller: instantiated(TodoController, config),
+      middleware: config.middleware,
     }),
   };
 };

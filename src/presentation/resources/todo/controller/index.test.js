@@ -38,7 +38,9 @@ describe('TodoController', () => {
 
     it('should add a todo with a title', () => {
       const createdTodo = { _id: uuid(), title };
-      const todoService = chai.spy.interface({ add: async () => Promise.resolve(createdTodo) });
+      const todoService = chai.spy.interface({
+        add: async () => Promise.resolve({ payload: createdTodo }),
+      });
       const req = { body: { title }, context: ctx };
 
       return new TodoController({ applicationLayer: { services: { todoService } } })
