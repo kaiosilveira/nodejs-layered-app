@@ -37,8 +37,8 @@ export class ExpressAppFactory {
     app.use(middleware.incomingRequestMiddleware.hook);
     app.use(middleware.outgoingResponseMiddleware.hook);
 
-    const securityResource = createSecurityResource(config);
-    const todoResource = createTodoResource(config);
+    const securityResource = createSecurityResource({ ...config, middleware });
+    const todoResource = createTodoResource({ ...config, middleware });
 
     app.use(`/${securityResource.path}`, securityResource.router);
     app.use(`/${todoResource.path}`, todoResource.router);
