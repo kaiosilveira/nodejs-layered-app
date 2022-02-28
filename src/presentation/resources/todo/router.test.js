@@ -10,8 +10,17 @@ chai.should();
 describe('SecurityRouter', () => {
   it('should bind the routes', () => {
     const expressRouter = chai.spy.interface({ post: noop });
+    const authenticationMiddleware = chai.spy.interface({ hook: noop });
     const controller = { add: noop };
-    setupRouter({ expressRouterInstance: expressRouter, controller });
-    expressRouter.post.should.have.been.nth(1).called.with('/', controller.add);
+
+    setupRouter({
+      expressRouterInstance: expressRouter,
+      controller,
+      middleware: { authenticationMiddleware },
+    });
+
+    expressRouter.post.should.have.been
+      .nth(1)
+      .called.with('/', authenticationMiddleware.hook, controller.add);
   });
 });
