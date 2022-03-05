@@ -1,5 +1,6 @@
 import LoggerFactory from './kernel/logger/index.js';
 import MongooseFactory from './data-access/factories/mongoose/index.js';
+import schemas from './data-access/schemas/index.js';
 import createSecurityResource from './presentation/resources/security/index.js';
 import createTodoResource from './presentation/resources/todo/index.js';
 import configureMiddleware from './presentation/middleware/index.js';
@@ -28,7 +29,7 @@ export class ExpressAppFactory {
     const winston = libs.winston;
     const express = libs.express;
     const logger = LoggerFactory.createInstance({ winston });
-    const dbConn = await MongooseFactory.createConnection({ libs, env, logger });
+    const dbConn = await MongooseFactory.createConnection({ libs, env, schemas, logger });
     const config = { libs, env, logger, dbConn };
     const app = express();
     app.use(express.json());
