@@ -29,7 +29,7 @@ describe('TodoController', () => {
   describe('add', () => {
     it('should not add a todo without a title', () => {
       const req = { body: { title: undefined } };
-      const res = new ResponseStub();
+
       return new TodoController().add(req, res).then(({ status, body }) => {
         status.should.be.eql(httpCodes.BAD_REQUEST);
         body.should.be.eql(errors.INVALID_TODO_TITLE());

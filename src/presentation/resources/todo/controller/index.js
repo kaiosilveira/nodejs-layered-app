@@ -22,7 +22,7 @@ export default class TodoController {
     try {
       const todo = { title, due };
       const { payload: createdTodo } = await this.props.todoService.add({ args: todo, ctx });
-      res.status(httpCodes.CREATED).json(createdTodo);
+      return res.status(httpCodes.CREATED).json(createdTodo);
     } catch ({ message, stack }) {
       this._logger.error({ message, stack, ...ctx });
       return res.status(httpCodes.INTERNAL_SERVER_ERROR).json(errors.UNEXPECTED());

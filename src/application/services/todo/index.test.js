@@ -37,7 +37,7 @@ describe('TodoService', () => {
       const defaultDueDate = DateTimeUtils.nextHour();
       const createdTodoWithDefaultDueDate = { ...createdTodo, due: defaultDueDate };
       const todoRepository = chai.spy.interface({
-        create: async () => Promise.resolve(createdTodoWithDefaultDueDate),
+        create: async () => Promise.resolve({ payload: createdTodoWithDefaultDueDate }),
       });
 
       const todo = { title, due: undefined };
@@ -55,7 +55,7 @@ describe('TodoService', () => {
     it('should use the todo due date if there is one', () => {
       const createdTodoWithDefaultDueDate = { ...createdTodo, due };
       const todoRepository = chai.spy.interface({
-        create: async () => Promise.resolve(createdTodoWithDefaultDueDate),
+        create: async () => Promise.resolve({ payload: createdTodoWithDefaultDueDate }),
       });
 
       const todo = { title, due };
