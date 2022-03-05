@@ -15,7 +15,7 @@ const JWT_SIGNING_KEY = 'key';
 const user = { _id: uuid(), username: 'kaio' };
 const context = { actionUUID: uuid() };
 
-describe.only('AuthenticationMiddleware', () => {
+describe('AuthenticationMiddleware', () => {
   let res;
   beforeEach(() => {
     res = new ResponseStub();

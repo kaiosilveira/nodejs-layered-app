@@ -15,7 +15,7 @@ const username = 'kaio';
 const password = '123';
 
 describe('Todo resource', () => {
-  describe.only('create', () => {
+  describe('create', () => {
     let app, dbServer, token;
     before(async () => {
       const serverStack = await AcceptanceTestServerFactory.create();
