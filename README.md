@@ -170,7 +170,9 @@ This example application has no registered tasks at the moment, but should it ne
 ## Real-world considerations and tweaks
 
 Spread across the documentation we could notice that some tweaks were needed in order to make this structure usable in production. Some others were not menitoned, but worth noticing.
+
 Noticeably, unit tests could become really verbose to implement, considering the overhead that the dependency injection system brings to the system. This was addressed in real-world implementations of this example by a `DependencyBuilder`: a fluent implementation of the builder pattern. This builder is responsible to provide methods like `addApplicationService` and `addRepository` and to create the final structure using these given resources, so the engineers would not need to mind the whole dependency tree.
+
 Another improvement was to create assertion functions to verify the results, abstracting the overhead of destructing the properties of the response (commonly `payload` + `meta` at the presentation layer and `status` and `body` at the presentation layer), these functions look like `assertControllerFailedWithInternalServerErrorAnd()` and `assertControllerSucceedsWithCreatedAnd()`, this saves some lines of code, makes the readability of the tests way better and makes the implementation of unit tests way less tedious.
 
 ## Conclusions and next steps
