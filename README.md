@@ -128,9 +128,9 @@ The application structure allows for treating all backing services as attached r
 
 **V. Build, release, run — Strictly separate build and run stages**
 
-The deploy pipeline was left out of this example as its not intended to be deployed to any environment and servunite only as a reference. Production versions based on this example's structure were implemented using GitHub Actions + AWS ECS (Elastic Container Service) to provide Continous Delivery. The stages of the pipeline were the following:
+The deploy pipeline was left out of this example as its not intended to be deployed to any environment and serve only as a reference. Production versions based on this example's structure were implemented using GitHub Actions + AWS ECS (Elastic Container Service) to provide Continous Delivery. The stages of the pipeline were the following:
 
-- creating a docker image of the application, bounded to its external configuration (though env vars)
+- creating a docker image of the application, bounded to its external configuration (through env vars)
 - pushing the image to the AWS ECR (Elastic Container Registry)
 - fetching the AWS ECS' task definition
 - updating the task definition to point to the new container image created in the steps above
@@ -165,7 +165,7 @@ We're using `winston` as our logging tool. Currently it's set up to use a simple
 
 **XII. Admin processes — Run admin/management tasks as one-off processes**
 
-This example application has no registered tasks at the moment, but should it need it, we could probably keep them all under a `/tasks` directory, then we could load the files needed to perform the task at hand aand run it via the `scripts` section in the `package.json` file.
+This example application has no registered tasks at the moment, but should it need it, we could probably keep them all under a `/tasks` directory, then we could load the files needed to perform the task at hand and run it via the `scripts` section in the `package.json` file.
 
 ## Real-world considerations and tweaks
 
