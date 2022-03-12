@@ -6,6 +6,8 @@ import UsersRepository from './index.js';
 import noop from 'lodash/noop.js';
 
 import unexpectedPromiseResolutionGuard from '../../../../test/utils/guards/unexpected-promise-resolution.js';
+import User from '../../../domain/entities/user/impl/index.js';
+import { asMongoDBResult } from '../../../../test/utils/db/index.js';
 
 chai.use(spies);
 chai.use(asPromised);
@@ -16,6 +18,7 @@ const password = 'pwd';
 const error = new Error();
 const logger = chai.spy.interface({ error: noop });
 const ctx = { actionUUID: 'action-uuid' };
+const user = new User({ username, password });
 
 describe('UsersRepository', () => {
   describe('create', () => {
@@ -25,19 +28,26 @@ describe('UsersRepository', () => {
 
     it('should create an user', () => {
       const createdUser = { _id: uuid(), username, password };
-      const model = chai.spy.interface({ create: async () => Promise.resolve(createdUser) });
-      return new UsersRepository({ model })
-        .create({ args: { username, password } })
-        .then(({ payload }) => payload.should.be.eql(createdUser)).should.not.be.rejected;
+      const model = chai.spy.interface({
+        create: async () => Promise.resolve(asMongoDBResult(createdUser)),
+      });
+
+      return new UsersRepository({ model }).create({ args: user, ctx }).then(({ payload }) => {
+        payload.should.be.instanceOf(User);
+        payload.id.should.be.eql(createdUser._id);
+        payload.username.should.be.eql(createdUser.username);
+        model.create.should.have.been.called.with(user.toJSON());
+      }).should.not.be.rejected;
     });
 
     it('should handle unexpected errors', () => {
       const model = chai.spy.interface({ create: async () => Promise.reject(error) });
       return new UsersRepository({ model, logger })
-        .create({ args: { username, password }, ctx })
+        .create({ args: user, ctx })
         .then(unexpectedPromiseResolutionGuard)
         .catch(({ message }) => {
           message.should.be.eql('Failed to perform "create" operation');
+          model.create.should.have.been.called.with(user.toJSON());
           logger.error.should.have.been.called.with({
             message: error.message,
             stack: error.stack,
@@ -62,12 +72,16 @@ describe('UsersRepository', () => {
     });
 
     it('should perform a query with a given criteria', () => {
-      const foundObject = { _id: 'id' };
-      const model = chai.spy.interface({ findOne: async () => Promise.resolve(foundObject) });
-      const criteria = { field: 'value' };
+      const criteria = { username };
+      const foundObject = { _id: 'id', ...criteria };
+      const model = chai.spy.interface({
+        findOne: async () => Promise.resolve(asMongoDBResult(foundObject)),
+      });
 
       return new UsersRepository({ model }).getBy({ args: criteria }).then(({ payload }) => {
-        payload.should.be.eql(foundObject);
+        payload.should.be.instanceOf(User);
+        payload.id.should.be.eql(foundObject._id);
+        payload.username.should.be.eql(foundObject.username);
         model.findOne.should.have.been.called.with(criteria);
       }).should.not.be.rejected;
     });

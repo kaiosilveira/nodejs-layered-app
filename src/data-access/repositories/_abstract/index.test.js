@@ -4,14 +4,32 @@ import asPromised from 'chai-as-promised';
 import { v4 as uuid } from 'uuid';
 import noop from 'lodash/noop.js';
 
+import BaseEntity from '../../../domain/entities/_base/index.js';
 import Repository from './index.js';
 import unexpectedPromiseResolutionGuard from '../../../../test/utils/guards/unexpected-promise-resolution.js';
+import { asMongoDBResult } from '../../../../test/utils/db/index.js';
 
 chai.use(spies);
 chai.use(asPromised);
 chai.should();
 
-const obj = { field: 'value' };
+class MyEntityCtz extends BaseEntity {
+  constructor({ id, field }) {
+    super({ id });
+    this._field = field;
+  }
+
+  get field() {
+    return this._field;
+  }
+
+  toJSON() {
+    return { field: this._field };
+  }
+}
+
+const value = 'value';
+const entityInstance = new MyEntityCtz({ value });
 const ctx = { actionUUID: uuid() };
 const error = new Error('error');
 const logger = chai.spy.interface({ error: noop });
@@ -19,21 +37,28 @@ const logger = chai.spy.interface({ error: noop });
 describe('Repository', () => {
   describe('create', () => {
     it('should create an object', () => {
-      const createdObj = { ...obj, _id: uuid() };
-      const model = chai.spy.interface({ create: async () => Promise.resolve(createdObj) });
-      return new Repository({ model }).create({ args: obj, ctx }).then(({ payload }) => {
-        payload.should.be.eql(createdObj);
-        model.create.should.have.been.called.with(obj);
-      }).should.not.be.rejected;
+      const createdObj = { field: value, _id: uuid() };
+      const model = chai.spy.interface({
+        create: async () => Promise.resolve(asMongoDBResult(createdObj)),
+      });
+
+      return new Repository({ model, entityCtor: MyEntityCtz })
+        .create({ args: entityInstance, ctx })
+        .then(({ payload }) => {
+          payload.should.be.instanceOf(MyEntityCtz);
+          payload.id.should.be.eql(createdObj._id);
+          payload.field.should.be.eql(value);
+          model.create.should.have.been.called.with(entityInstance.toJSON());
+        }).should.not.be.rejected;
     });
 
     it('should handle unexpected errors from database model', () => {
       const model = chai.spy.interface({ create: async () => Promise.reejct(error) });
       return new Repository({ model, logger })
-        .create({ args: obj, ctx })
+        .create({ args: entityInstance, ctx })
         .then(unexpectedPromiseResolutionGuard)
         .catch(({ message }) => {
-          model.create.should.have.been.called.with(obj);
+          model.create.should.have.been.called.with(entityInstance.toJSON());
           message.should.be.eql('Failed to perform "create" operation');
         }).should.not.be.rejected;
     });
@@ -54,20 +79,26 @@ describe('Repository', () => {
     });
 
     it('should perform a query with a given criteria', () => {
-      const foundObject = { _id: 'id' };
-      const model = chai.spy.interface({ findOne: async () => Promise.resolve(foundObject) });
       const criteria = { field: 'value' };
+      const foundObject = { _id: 'id', ...criteria };
+      const model = chai.spy.interface({
+        findOne: async () => Promise.resolve(asMongoDBResult(foundObject)),
+      });
 
-      return new Repository({ model }).getBy({ args: criteria }).then(({ payload }) => {
-        payload.should.be.eql(foundObject);
-        model.findOne.should.have.been.called.with(criteria);
-      }).should.not.be.rejected;
+      return new Repository({ model, entityCtor: MyEntityCtz })
+        .getBy({ args: criteria })
+        .then(({ payload }) => {
+          payload.should.be.instanceOf(MyEntityCtz);
+          payload.id.should.be.eql(foundObject._id);
+          payload.field.should.be.eql(criteria.field);
+          model.findOne.should.have.been.called.with(criteria);
+        }).should.not.be.rejected;
     });
 
     it('should handle unexpected errors', () => {
       const criteria = { field: 'value' };
       const model = chai.spy.interface({ findOne: async () => Promise.reject(error) });
-      return new Repository({ model, logger })
+      return new Repository({ entityCtor: MyEntityCtz, model, logger })
         .getBy({ args: criteria, ctx })
         .then(unexpectedPromiseResolutionGuard)
         .catch(({ message }) => {

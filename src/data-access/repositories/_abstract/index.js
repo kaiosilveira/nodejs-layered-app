@@ -1,13 +1,19 @@
 export default class Repository {
-  constructor({ model, logger } = {}) {
+  constructor({ entityCtor, model, logger } = {}) {
+    this._entityCtor = entityCtor;
     this._model = model;
     this._logger = logger;
+
+    this.create = this.create.bind(this);
+    this.getBy = this.getBy.bind(this);
   }
 
   async create({ args: obj, ctx }) {
     try {
-      const payload = await this._model.create(obj);
-      return { payload };
+      const payload = await this._model.create(obj.toJSON());
+      const parsedObj = payload.toObject()
+      const instance = new this._entityCtor({ ...parsedObj, id: parsedObj._id });
+      return { payload: instance };
     } catch ({ message, stack }) {
       this._logger.error({ message, stack, ...ctx });
       throw new Error('Failed to perform "create" operation');
@@ -21,7 +27,8 @@ export default class Repository {
 
     try {
       const payload = await this._model.findOne(criteria);
-      return { payload };
+      const parsedObj = payload.toObject()
+      return { payload: new this._entityCtor({ ...parsedObj, id: parsedObj._id }) };
     } catch ({ message, stack }) {
       this._logger.error({ message, stack, ...ctx });
       throw new Error('Failed to perform "getBy" operation');

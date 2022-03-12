@@ -26,11 +26,11 @@ export default class TodoService {
 
     try {
       const { payload: createdTodo } = await this.props.todoRepository.create({
-        ctx,
         args: builder.build(),
+        ctx,
       });
 
-      return { payload: createdTodo };
+      return { payload: createdTodo.toJSON() };
     } catch ({ message, stack }) {
       this._logger.error({ message, stack, ...ctx });
       throw new ApplicationError({

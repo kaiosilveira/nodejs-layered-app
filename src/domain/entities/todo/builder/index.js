@@ -1,4 +1,4 @@
-import DateTimeUtils from '../../../utils/date-time/index.js';
+import Todo from '../impl/index.js';
 
 const INSUFFICIENT_PARTS_ERROR_MSG =
   'Insufficient parts to build a todo. Expected at least a title and a ownerId';
@@ -33,6 +33,6 @@ export default class TodoBuilder {
       throw new Error(INSUFFICIENT_PARTS_ERROR_MSG);
     }
 
-    return { ...this._obj, due: this._obj.due ?? DateTimeUtils.nextHour() };
+    return new Todo(this._obj);
   }
 }

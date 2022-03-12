@@ -1,6 +1,10 @@
-import TodoBuilder from './index.js';
-import DateTimeUtils from '../../../utils/date-time/index.js';
+import chai from 'chai';
 import { v4 as uuid } from 'uuid';
+
+import TodoBuilder from './index.js';
+import Todo from '../impl/index.js';
+
+chai.should();
 
 const title = 'Learn Ruby';
 
@@ -17,17 +21,11 @@ describe('TodoBuilder', () => {
     );
   });
 
-  it('should build a todo with a default due date if none is passed', () => {
-    const result = new TodoBuilder().withTitle(title).forUser(uuid()).build();
-
-    result.title.should.be.eql(title);
-    result.due.should.be.eql(DateTimeUtils.nextHour());
-  });
-
-  it('should use the given due date if one is passed in', () => {
+  it('should build a Todo', () => {
     const due = new Date();
     const result = new TodoBuilder().withTitle(title).forUser(uuid()).due(due).build();
 
+    result.should.be.instanceOf(Todo);
     result.title.should.be.eql(title);
     result.due.should.be.eql(due);
   });

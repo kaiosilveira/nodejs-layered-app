@@ -49,7 +49,7 @@ describe('Todo resource', () => {
       return new TodoResource({ app }).create({ todo, token }).then(({ status, body }) => {
         status.should.be.eql(httpCodes.CREATED);
         body.title.should.be.eql(title);
-        body._id.should.be.a('string');
+        body.id.should.be.a('string');
       }).should.not.be.rejected;
     });
   });

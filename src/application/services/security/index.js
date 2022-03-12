@@ -1,4 +1,5 @@
 import UsersRepository from '../../../data-access/repositories/user/index.js';
+import User from '../../../domain/entities/user/impl/index.js';
 import { ApplicationError } from '../../errors/index.js';
 import CryptoService from '../crypto/index.js';
 import JWTService from '../jwt/index.js';
@@ -27,11 +28,10 @@ export default class SecurityService {
       const { cryptoService, usersRepository } = this.props;
       const { payload: encryptedPwd } = cryptoService.hash({ args: password });
       const { payload: createdUser } = await usersRepository.create({
-        args: { username, password: encryptedPwd },
+        args: new User({ username, password: encryptedPwd }),
         ctx,
       });
-
-      return { payload: createdUser };
+      return { payload: createdUser.toJSON() };
     } catch ({ message, stack }) {
       this.logger.error({ message, stack, ...ctx });
       throw new ApplicationError(errors.UNEXPECTED());
@@ -77,7 +77,7 @@ export default class SecurityService {
   _signJWTTokenFor({ args: user, ctx }) {
     try {
       const result = this.props.jwtService.sign({
-        args: { _id: user._id, username: user.username },
+        args: { _id: user.id, username: user.username },
         ctx,
       });
 
@@ -90,7 +90,7 @@ export default class SecurityService {
 
   _validateHashedPassword(user, password) {
     const { payload: hash } = this.props.cryptoService.hash({ args: password });
-    if (hash !== user.password) {
+    if (!user.passwordMatches(hash)) {
       throw new ApplicationError(errors.INVALID_CREDENTIALS());
     }
   }

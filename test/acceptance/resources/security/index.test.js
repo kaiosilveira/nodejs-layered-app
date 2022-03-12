@@ -50,9 +50,8 @@ describe('Security resource', () => {
         .register({ username, password })
         .then(({ status, body }) => {
           status.should.be.eql(httpCodes.CREATED);
-          body._id.should.be.a('string');
+          body.id.should.be.a('string');
           body.username.should.be.eql(username);
-          body.password.should.not.be.eql(password);
         }).should.not.be.rejected;
     });
   });
