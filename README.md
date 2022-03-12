@@ -176,8 +176,13 @@ Another improvement was to create assertion functions to verify the results, abs
 ## Conclusions and next steps
 
 As demonstrated, this structure could deliver good results to small and medium-size NodeJS applications, where "size" here is used both to refer to the amount of files + lines of code and to team size, and the explanation for both of the meanings are expanded below.
+
 For the first inferred meaning, it scales well and without much noise as new resources are added to the system, although adding new entities to it could be considered costing, as we need to setup all the layers for this new entity and integrate it to the whole structure.
+
 For the organizational side of the discussion, team size could be a problem when working on this structure, as segregating the ownership of the application could be hard and cause a lot of overhead spread across multiple teams to develop a single feature, depending on the decisions on how to split it. Let's say, for instance, that the decision was to have a team for each layer. Then a new feature to add a new resource would take multiple teams working on the different layers, and this work would probably be sequential, as the upper layers all depend on the lower layers to perform their work, specially on the `Domain`.
+
 This structure is also not microservice-ready (as we are not able to easily split it into multiple, small services), which would prevent ownership of being defined by resources instead of layers.
+
 The last option would be to have multiple teams touching multiple layers of the application and possibily multiple resources at the same time, which is doable, but would require a lot of discipline, code tooling and test coverage to make sure everything remains consistent.
+
 To address this concerns around ownership and other organizational issues that arise as we reach certain levels of scale, the recommendation would be to rotate the structure 90 degrees, therefore creating a more resource-oriented, microservice-ready structure so teams could decide to split it into multiple small services or to keep a monorepo with tooling to accept partial builds and partial executions to make it easy to run locally having a certain degree of decoupling at the same time.

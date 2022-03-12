@@ -1,6 +1,7 @@
 # Domain layer
 
 THe domain layer is responsible for holding sensitive rules, aiming for the consistency and preservation of the whole application. It has a structure focused on protecting the quality of the data being transfered in and out of the system, as well as helping the application layer to keep the whole structure consistent.
+
 At the domain layer we have entities defined, sometimes alongside its builders and factories, as needed. The lifecycle of an entity in the system will depend on the nature of the request, e.g., if it's a query request (using the jargon of CQRS), then it will:
 
 - Be created at the Data Access Layer, after the data is retrieved by the repository
