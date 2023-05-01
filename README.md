@@ -1,6 +1,8 @@
 [![CI](https://github.com/kaiosilveira/nodejs-layered-app/actions/workflows/ci.yml/badge.svg)](https://github.com/kaiosilveira/nodejs-layered-app/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/kaiosilveira/nodejs-layered-app/branch/main/graph/badge.svg?token=DZ5UX1Y0P5)](https://codecov.io/gh/kaiosilveira/nodejs-layered-app)
 
+**ℹ️ _NOTE TO FUTURE READERS: Due to new learnings, specially from "Domain-Driven Design" (Evans 2003) and "Strategic Monoliths and Microservices" (Vernon & Jaskula 2022), this implementation no longer reflect my opinion on how to design modular software systems. Although some of the building blocks described in DDD are present here, I now see that some of the choices I made do not yield good design properties in the mid to long-term, specially when it comes to flexibility and isolation. Nevertheless, what's presented here, in my opinion, is still a good try and worth the reading._**
+
 # NodeJS Layered App
 
 This repository is a working example of a layered API application implemented in NodeJS, its focus is to demonstrate the advantages and disadvantages of this approach, walking the reader through each layer and explaining the rationale behind each design decision.
